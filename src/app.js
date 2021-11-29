@@ -1,9 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { uuid } = require("uuidv4");
-
-
-
+const { stringify } = require("uuid");
 
 // const { v4: uuid, validate: isUuid } = require('uuid');
 
@@ -14,24 +12,31 @@ app.use(cors());
 
 const repositories = [];
 
-app.get("/repositories", (request, response) => {
-  const { title, url, techs, likes } = request.body;
-  repositoriesFormat = { id: uuid(), title, url, techs, likes }
-  if(likes.request.body != 0){
-    likes.response.body = 0;
-  }
-  console.log(repositoriesFormat)
-
-
-  return response.json(repositoriesFormat)
+app.get("/repositories", (request,response) => {
+  return response.json(repositories)
 });
 
 app.post("/repositories", (request, response) => {
-  // TODO
-});
+  const { title, url, techs, likes} = request.body;
+    const repository = { id: uuid(), title, url, techs, likes}
+      repositories.push(repository)
+      return response.json(repository)
+})
 
 app.put("/repositories/:id", (request, response) => {
-  // TODO
+  const { id } = request.params;
+    const { title, url, techs, likes } = request.body;
+    const repositoryIndex = repositories.findIndex(repository => repository.id === id);
+      if(repositoryIndex < 0){
+        return response.status(400).json({ error: "Project not found"})
+      }
+
+      const repository = { id , title, url, techs, likes}
+
+      repositories[repositoryIndex] = repository;
+
+
+      return response.json(repository)
 });
 
 app.delete("/repositories/:id", (request, response) => {
