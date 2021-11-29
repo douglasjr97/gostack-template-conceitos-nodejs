@@ -10,7 +10,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const repositories = [];
+const repositories = [
+  { id: uuid(), title: "Front", url: "http://facebook.com", techs: "React", likes: 20 },
+  { id: uuid(), title: "Backend", url: "http://facebook.com", techs: "Node", likes: 30 }
+];
 
 app.get("/repositories", (request,response) => {
   return response.json(repositories)
