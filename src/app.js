@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const { uuid } = require("uuidv4");
-const { stringify } = require("uuid");
 
 // const { v4: uuid, validate: isUuid } = require('uuid');
 
@@ -10,40 +9,41 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const repositories = [
-  { id: uuid(), title: "Front", url: "http://facebook.com", techs: "React", likes: 20 },
-  { id: uuid(), title: "Backend", url: "http://facebook.com", techs: "Node", likes: 30 }
-];
+const repositories = [];
 
-app.get("/repositories", (request,response) => {
-  return response.json(repositories)
+app.get("/repositories", (request, response) => {
+      return response.json(repositories)
 });
 
 app.post("/repositories", (request, response) => {
-  const { title, url, techs, likes} = request.body;
-    const repository = { id: uuid(), title, url, techs, likes}
-      repositories.push(repository)
-      return response.json(repository)
-})
+  const {title, url, techs, likes} = request.body;
+    const repository = {id: uuid(), title, url, techs, likes};
+      repositories.push(repository);
+        return response.json(repositories)
+});
 
 app.put("/repositories/:id", (request, response) => {
   const { id } = request.params;
-    const { title, url, techs, likes } = request.body;
-    const repositoryIndex = repositories.findIndex(repository => repository.id === id);
-      if(repositoryIndex < 0){
-        return response.status(400).json({ error: "Project not found"})
-      }
-
-      const repository = { id , title, url, techs, likes}
-
-      repositories[repositoryIndex] = repository;
-
-
-      return response.json(repository)
+    const { title, owner } = request.body;
+      const repositoriesIndex = repositories.findIndex(repository => repository.id === id);
+        const repository = {
+          id,
+          title,
+          owner
+        };
+          repositories[repositoriesIndex] = repository;
+            return response.json(repository)
 });
 
 app.delete("/repositories/:id", (request, response) => {
-  // TODO
+  const { id } = request.params;
+    const repositoriesIndex = repositories.findIndex(repository => repository.id === id);
+      if(repositoriesIndex < 0){
+        return response.status(400).json({error: "Project not found."})
+      }
+
+      repositories.splice(repositoriesIndex, 1);
+        return response.json("deleted with success")
 });
 
 app.post("/repositories/:id/like", (request, response) => {
@@ -51,7 +51,7 @@ app.post("/repositories/:id/like", (request, response) => {
 });
 
 app.listen(3333, () => {
-  console.log('Backend start! 🚀')
+  console.log('backend start! 🚀')
 })
 
 module.exports = app;
